@@ -1,8 +1,36 @@
+#include <ctime>
 #include <iostream>
 #include <stdexcept>
 #include <string>
+#include <chrono>
+#include <ctime>
+#include <iomanip>
+#include <sstream>
 
 #include <zip.h>
+
+void show_helper(bool is_error = false)
+{
+    std::string help_msg = "Usage: zipper [path/to/source/dir] [path/to/output/dir]";
+
+    if (is_error) {
+        std::cerr << help_msg << std::endl;
+        return;
+    }
+
+    std::cout << help_msg << std::endl;
+}
+
+std::string current_datetime()
+{
+    auto now = std::chrono::system_clock::now();
+    auto in_time_t = std::chrono::system_clock::to_time_t(now);
+
+    std::stringstream ss;
+    ss << std::put_time(std::localtime(&in_time_t), "%Y-%m-%d_%H-%M-%S");
+
+    return ss.str();
+}
 
 zip_t* create_archive(const std::string& archive_name)
 {
@@ -13,8 +41,6 @@ zip_t* create_archive(const std::string& archive_name)
         zip_error_t error;
         zip_error_init_with_code(&error, err);
         zip_error_fini(&error);
-
-        std::cerr << "DEU ERRO" << std::endl;
 
         throw std::runtime_error("Failed to create archive: " + archive_name);
     }
@@ -34,16 +60,30 @@ void add_file(zip_t* archive, const std::string& source_path)
         zip_source_free(source);
         throw std::runtime_error("Failed to add file to archive.");
     }
-
-    std::cout << "break " << std::endl;
 }
 
 int main(int argc, char* argv[])
 {
+    if (argc < 2) {
+        std::cerr << "ERROR: no source directory provided." << std::endl;
+        show_helper(true);
+        return 1;
+    }
+
+    if (argc < 3) {
+        std::cerr << "ERROR: no output directory provided." << std::endl;
+        show_helper(true);
+        return 1;
+    }
+
+    std::string source_dir = argv[1];
+    std::string out_dir = argv[2];
+    std::string out_file_name = current_datetime() += ".zip";
+
     zip_t* file;
 
     try {
-        file = create_archive("test.zip");
+        file = create_archive(out_file_name);
         add_file(file, "build/Makefile");
         zip_close(file);
     } catch (const std::runtime_error& e) {
@@ -51,7 +91,7 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    std::cout << "Hello World! aqui" << std::endl;
+    std::cout << "Backup feito com sucesso." << std::endl;
 
     return 0;
 }
