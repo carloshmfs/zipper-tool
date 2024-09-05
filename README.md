@@ -12,10 +12,13 @@ zipper -h
 ### Requirements
 
 * [CMake](https://cmake.org/)
-* [MinGW](https://www.mingw-w64.org)
+* [MinGW](https://www.mingw-w64.org) (if you are compiling for windows)
 
 ```bash
-# Build the cmake files
+# On Linux
+cmake . -B build
+
+# On windows
 cmake . -B build -G "MinGW Makefiles"
 
 # Compile
