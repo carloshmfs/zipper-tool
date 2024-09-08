@@ -6,6 +6,9 @@
 #include <ctime>
 #include <iomanip>
 #include <sstream>
+#include <vector>
+#include <algorithm>
+#include <ctype.h>
 #include <dirent.h>
 #include <sys/stat.h>
 #include <errno.h>
@@ -40,6 +43,60 @@ std::string current_datetime()
     ss << std::put_time(std::localtime(&in_time_t), "%Y-%m-%d_%H-%M-%S");
 
     return ss.str();
+}
+
+std::string get_last_dir(const std::string& path)
+{
+    std::stringstream ss(path);
+
+    std::string token;
+    std::vector<std::string> tokens;
+    while (std::getline(ss, token, '\\')) {
+        tokens.push_back(token);
+    }
+
+    if (!tokens.empty()) {
+        return tokens.back();
+    }
+
+    return "\\";
+}
+
+bool is_url_friendly(char ch)
+{
+    return std::isalnum(ch) || ch == '-';
+}
+
+std::string create_slug(const std::string& input)
+{
+    std::string slug = input;
+
+    // Convert all characters to lowercase
+    std::transform(slug.begin(), slug.end(), slug.begin(), ::tolower);
+
+    // Replace spaces with hyphens
+    std::replace(slug.begin(), slug.end(), ' ', '-');
+
+    // Remove non-alphanumeric characters except hyphens
+    slug.erase(std::remove_if(slug.begin(), slug.end(), [](char ch) {
+        return !is_url_friendly(ch);
+    }), slug.end());
+
+    // Remove consecutive hyphens
+    auto new_end = std::unique(slug.begin(), slug.end(), [](char a, char b) {
+        return a == '-' && b == '-';
+    });
+    slug.erase(new_end, slug.end());
+
+    // Remove leading or trailing hyphens
+    if (!slug.empty() && slug.front() == '-') {
+        slug.erase(slug.begin());
+    }
+    if (!slug.empty() && slug.back() == '-') {
+        slug.erase(slug.end() - 1);
+    }
+
+    return slug;
 }
 
 zip_t* create_archive(const std::string& archive_name)
@@ -126,7 +183,9 @@ int main(int argc, char* argv[])
 
     std::string source_dir = argv[1];
     std::string out_dir = argv[2];
-    std::string out_file_name = current_datetime() += ".zip";
+
+    std::string source_dir_name = get_last_dir(source_dir);
+    std::string out_file_name = create_slug(source_dir_name) + "_" + current_datetime() += ".zip";
 
     zip_t* file;
     file = create_archive(out_dir + "/" + out_file_name);
