@@ -6,12 +6,15 @@
 #include <ctime>
 #include <iomanip>
 #include <sstream>
+#include <dirent.h>
+#include <sys/stat.h>
+#include <errno.h>
 
 #include <zip.h>
 
 void show_helper(bool is_error = false)
 {
-    std::string help_msg = "Usage: zipper [path/to/source/dir] [path/to/output/dir]";
+    std::string help_msg = "Usage: archive <path/to/source/dir> <path/to/output/dir>";
 
     if (is_error) {
         std::cerr << help_msg << std::endl;
@@ -19,6 +22,13 @@ void show_helper(bool is_error = false)
     }
 
     std::cout << help_msg << std::endl;
+}
+
+bool is_dir(const std::string& dir)
+{
+    struct stat st;
+    ::stat(dir.c_str(), &st);
+    return S_ISDIR(st.st_mode);
 }
 
 std::string current_datetime()
@@ -62,6 +72,37 @@ void add_file(zip_t* archive, const std::string& source_path)
     }
 }
 
+void walk_directory(zip_t* archive, const std::string& startdir, const std::string& inputdir)
+{
+    DIR *dp = ::opendir(inputdir.c_str());
+    if (dp == nullptr) {
+        throw std::runtime_error("Failed to open input directory: " + std::string(::strerror(errno)));
+    }
+
+    struct dirent *dirp;
+    while ((dirp = readdir(dp)) != NULL) {
+        if (dirp->d_name != std::string(".") && dirp->d_name != std::string("..")) {
+            std::string fullname = inputdir + "/" + dirp->d_name;
+            if (is_dir(fullname)) {
+                if (zip_dir_add(archive, fullname.substr(startdir.length() + 1).c_str(), ZIP_FL_ENC_UTF_8) < 0) {
+                    throw std::runtime_error("Failed to add directory to zip: " + std::string(zip_strerror(archive)));
+                }
+                walk_directory(archive, startdir, fullname);
+            } else {
+                zip_source_t *source = zip_source_file(archive, fullname.c_str(), 0, 0);
+                if (source == nullptr) {
+                    throw std::runtime_error("Failed to add file to zip: " + std::string(zip_strerror(archive)));
+                }
+                if (zip_file_add(archive, fullname.substr(startdir.length() + 1).c_str(), source, ZIP_FL_ENC_UTF_8) < 0) {
+                    zip_source_free(source);
+                    throw std::runtime_error("Failed to add file to zip: " + std::string(zip_strerror(archive)));
+                }
+            }
+        }
+    }
+    ::closedir(dp);
+}
+
 int main(int argc, char* argv[])
 {
     if (argc < 2) {
@@ -81,15 +122,19 @@ int main(int argc, char* argv[])
     std::string out_file_name = current_datetime() += ".zip";
 
     zip_t* file;
+    file = create_archive(out_dir + "/" + out_file_name);
 
     try {
-        file = create_archive(out_file_name);
-        add_file(file, "build/Makefile");
-        zip_close(file);
+
+        walk_directory(file, source_dir, source_dir);
+
     } catch (const std::runtime_error& e) {
+        zip_close(file);
         std::cerr << "ERROR: " << e.what() << std::endl;
         return 1;
     }
+
+    zip_close(file);
 
     std::cout << "Backup feito com sucesso." << std::endl;
 
