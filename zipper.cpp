@@ -103,6 +103,13 @@ void walk_directory(zip_t* archive, const std::string& startdir, const std::stri
     ::closedir(dp);
 }
 
+void archive_progress_callback(zip_t* archive, double progress, void* user_data)
+{
+    (void)user_data;
+
+    std::cout << std::fixed << std::setprecision(1) << "Compressing complete: " << progress * 100 << "%" << std::endl;
+}
+
 int main(int argc, char* argv[])
 {
     if (argc < 2) {
@@ -124,6 +131,8 @@ int main(int argc, char* argv[])
     zip_t* file;
     file = create_archive(out_dir + "/" + out_file_name);
 
+    zip_register_progress_callback_with_state(file, 0.05, archive_progress_callback, nullptr, nullptr);
+
     try {
 
         walk_directory(file, source_dir, source_dir);
@@ -136,7 +145,7 @@ int main(int argc, char* argv[])
 
     zip_close(file);
 
-    std::cout << "Backup feito com sucesso." << std::endl;
+    std::cout << "Zip archive done successfully." << std::endl;
 
     return 0;
 }
