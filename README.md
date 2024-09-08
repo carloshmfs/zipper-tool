@@ -1,10 +1,7 @@
 ## Usage
 
 ```bash
-zipper [path/to/source/dir] [path/to/output/dir]
-
-# To list all the options
-zipper -h
+zipper <path/to/source/dir> <path/to/output/dir>
 ```
 
 ## Build
