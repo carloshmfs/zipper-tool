@@ -1,3 +1,5 @@
+#include "ProgressBar.h"
+
 #include <ctime>
 #include <iostream>
 #include <stdexcept>
@@ -161,11 +163,11 @@ void walk_directory(zip_t* archive, const std::string& startdir, const std::stri
     ::closedir(dp);
 }
 
-void archive_progress_callback(zip_t* archive, double progress, void* user_data)
+void on_progress_state_change(zip_t* archive, double progress, void* user_data)
 {
-    (void)user_data;
-
-    std::cout << std::fixed << std::setprecision(1) << "Compressing complete: " << progress * 100 << "%" << std::endl;
+    ProgressBar* bar = reinterpret_cast<ProgressBar*>(user_data);
+    bar->update(static_cast<int>(progress * 100));
+    bar->show();
 }
 
 int main(int argc, char* argv[])
@@ -191,7 +193,8 @@ int main(int argc, char* argv[])
     zip_t* file;
     file = create_archive(out_dir + "/" + out_file_name);
 
-    zip_register_progress_callback_with_state(file, 0.05, archive_progress_callback, nullptr, nullptr);
+    ProgressBar bar;
+    zip_register_progress_callback_with_state(file, 0.05, on_progress_state_change, nullptr, &bar);
 
     try {
 
@@ -205,7 +208,7 @@ int main(int argc, char* argv[])
 
     zip_close(file);
 
-    std::cout << "Zip archive done successfully." << std::endl;
+    std::cout << std::endl << "Zip archive done successfully." << std::endl;
 
     return 0;
 }
