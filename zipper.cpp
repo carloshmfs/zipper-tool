@@ -12,6 +12,7 @@
 #include <dirent.h>
 #include <sys/stat.h>
 #include <errno.h>
+#include <cstring>
 
 #include <zip.h>
 
@@ -133,7 +134,7 @@ void walk_directory(zip_t* archive, const std::string& startdir, const std::stri
 {
     DIR *dp = ::opendir(inputdir.c_str());
     if (dp == nullptr) {
-        throw std::runtime_error("Failed to open input directory: " + std::string(::strerror(errno)));
+        throw std::runtime_error("Failed to open input directory: " + std::string(std::strerror(errno)));
     }
 
     struct dirent *dirp;
