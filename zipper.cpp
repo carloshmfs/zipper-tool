@@ -166,7 +166,7 @@ void walk_directory(zip_t* archive, const std::string& startdir, const std::stri
 void on_progress_state_change(zip_t* archive, double progress, void* user_data)
 {
     ProgressBar* bar = reinterpret_cast<ProgressBar*>(user_data);
-    bar->update(static_cast<int>(progress * 100));
+    bar->update(progress * 100);
     bar->show();
 }
 
@@ -194,7 +194,7 @@ int main(int argc, char* argv[])
     file = create_archive(out_dir + "/" + out_file_name);
 
     ProgressBar bar;
-    zip_register_progress_callback_with_state(file, 0.05, on_progress_state_change, nullptr, &bar);
+    zip_register_progress_callback_with_state(file, 0.02, on_progress_state_change, nullptr, &bar);
 
     try {
 
