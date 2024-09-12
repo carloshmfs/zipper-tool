@@ -1,3 +1,5 @@
+#pragma once
+
 class ProgressBar {
 public:
     void update(float);
