@@ -1,5 +1,5 @@
+#include "ArgsParser.h"
 #include "Zipper.h"
-#include "ProgressBar.h"
 #include "utils.h"
 
 #if 0
@@ -119,10 +119,20 @@ int main(int argc, char* argv[])
 
 int main(int argc, char* argv[])
 {
+    std::string sourceDir;
+    std::string outputDir;
+
+    ArgsParser parser(argc, argv);
+    parser.addPositionalArgument(sourceDir, "source dir", "Path to the directory that will be archived");
+    parser.addPositionalArgument(outputDir, "output dir", "Path of the output archive");
+    parser.parse();
+
+    return 0;
+
     Zipper zipper;
     zipper.archiveName("test.zip");
-    zipper.saveAt("test");
-    zipper.addDirectory("build");
+    zipper.saveAt(outputDir);
+    zipper.addDirectory(sourceDir);
     zipper.make();
 
     return 0;
