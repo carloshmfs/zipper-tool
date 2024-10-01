@@ -120,9 +120,10 @@ int main(int argc, char* argv[])
 int main(int argc, char* argv[])
 {
     Zipper zipper;
-    zipper.setSourceDir("test");
-    zipper.setOutDir("test");
-    zipper.exec();
+    zipper.archiveName("test.zip");
+    zipper.saveAt("test");
+    zipper.addDirectory("build");
+    zipper.make();
 
     return 0;
 }

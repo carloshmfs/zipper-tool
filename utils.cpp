@@ -13,14 +13,16 @@
 
 void show_helper(bool is_error = false)
 {
-    std::string help_msg = "Usage: archive <path/to/source/dir> <path/to/output/dir>";
+    std::stringstream help_msg = "Usage: zipper [options...] <path/to/directory> <path/to/save/archive>" << std::endl << std::endl;
+    help_msg << "OPTIONS:" << std::endl;
+    help_msg << " -h\t--help\t\tShow this message." << std::endl;
 
     if (is_error) {
-        std::cerr << help_msg << std::endl;
+        std::cerr << help_msg.str() << std::endl;
         return;
     }
 
-    std::cout << help_msg << std::endl;
+    std::cout << help_msg.str() << std::endl;
 }
 
 bool is_dir(const std::string& dir)
