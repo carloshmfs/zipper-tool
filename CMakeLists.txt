@@ -13,8 +13,14 @@ FetchContent_Declare(zstd GIT_REPOSITORY https://github.com/facebook/zstd.git GI
 FetchContent_Declare(libzip GIT_REPOSITORY https://github.com/nih-at/libzip.git GIT_TAG v1.10.1)
 FetchContent_MakeAvailable(zstd libzip)
 
-file(GLOB SOURCES "*.cpp")
-add_executable(${CMAKE_PROJECT_NAME} ${SOURCES})
+add_executable(
+    ${CMAKE_PROJECT_NAME} 
+    main.cpp
+    utils.cpp
+    ArgsParser.cpp
+    Zipper.cpp
+    ProgressBar.cpp
+)
 
 target_link_libraries(${CMAKE_PROJECT_NAME} PUBLIC libzip::zip -static)
 
