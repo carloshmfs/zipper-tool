@@ -15,11 +15,12 @@ FetchContent_MakeAvailable(zstd libzip)
 
 add_executable(
     ${CMAKE_PROJECT_NAME} 
-    main.cpp
-    utils.cpp
-    ArgsParser.cpp
-    Zipper.cpp
+    CommandLineParser.cpp
+    CommandLineOption.cpp
     ProgressBar.cpp
+    Zipper.cpp
+    utils.cpp
+    main.cpp
 )
 
 target_link_libraries(${CMAKE_PROJECT_NAME} PUBLIC libzip::zip -static)
