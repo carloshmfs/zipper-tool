@@ -17,13 +17,14 @@ add_executable(
     ${CMAKE_PROJECT_NAME} 
     CommandLineParser.cpp
     CommandLineOption.cpp
+    CommandLineArgument.cpp
     ProgressBar.cpp
     Zipper.cpp
     utils.cpp
     main.cpp
 )
 
-target_link_libraries(${CMAKE_PROJECT_NAME} PUBLIC libzip::zip -static)
+target_link_libraries(${CMAKE_PROJECT_NAME} PUBLIC libzip::zip)
 
 if (MINGW)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libgcc -static-libstdc++")

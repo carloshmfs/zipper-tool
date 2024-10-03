@@ -8,11 +8,11 @@ int CommandLineParser::showHelp(int statusCode) const
     std::cout << "Usage: " << m_applicationName;
 
     for (const auto& arg : m_positionalArguments) {
-        std::cout << arg.getSyntax();
+        std::cout << " " << arg.getSyntax();
     }
     std::cout << std::endl;
 
-    return 0;
+    return statusCode;
 }
 
 void CommandLineParser::setApplicationName(const std::string& name)
@@ -55,4 +55,14 @@ void CommandLineParser::parsePositionalArguments()
 void CommandLineParser::parseOptions()
 {
     // TODO...
+}
+
+bool CommandLineParser::isSet(const std::string& value) const
+{
+    return false;
+}
+
+std::string CommandLineParser::getValue(const std::string& value) const
+{
+    return std::string();
 }
