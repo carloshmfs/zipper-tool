@@ -1,6 +1,9 @@
 #include "CommandLineParser.h"
+#include "Zipper.h"
+#include "utils.h"
 
 #include <iostream>
+#include <stdexcept>
 
 int main(int argc, char* argv[])
 {
@@ -21,14 +24,17 @@ int main(int argc, char* argv[])
     std::string sourceDir = parser.getValue("source");
     std::string outputDir = parser.getValue("output");
     
-    std::cout << sourceDir << std::endl;
-    std::cout << outputDir << std::endl;
+    Zipper zipper;
+    zipper.archiveName(toSlug(getLastDir(outputDir)));
+    zipper.saveAt(outputDir);
+    zipper.addDirectory(sourceDir);
 
-    // Zipper zipper;
-    // zipper.archiveName("test.zip");
-    // zipper.saveAt(outputDir);
-    // zipper.addDirectory(sourceDir);
-    // zipper.make();
+    try {
+        zipper.make();
+    } catch (const std::runtime_error& e) {
+        std::cerr << "ERROR: " << e.what() << std::endl;
+        return 1;
+    }
 
     return 0;
 }

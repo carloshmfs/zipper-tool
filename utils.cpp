@@ -1,6 +1,5 @@
 #include "utils.h"
 
-#include <iostream>
 #include <string>
 #include <chrono>
 #include <ctime>
@@ -11,28 +10,14 @@
 #include <ctype.h>
 #include <sys/stat.h>
 
-void show_helper(bool is_error = false)
-{
-    // std::stringstream help_msg = "Usage: zipper [options...] <path/to/directory> <path/to/save/archive>";
-    // help_msg << "OPTIONS:" << std::endl;
-    // help_msg << " -h\t--help\t\tShow this message." << std::endl;
-    //
-    // if (is_error) {
-    //     std::cerr << help_msg.str() << std::endl;
-    //     return;
-    // }
-    //
-    // std::cout << help_msg.str() << std::endl;
-}
-
-bool is_dir(const std::string& dir)
+bool isDir(const std::string& dir)
 {
     struct stat st;
     ::stat(dir.c_str(), &st);
     return S_ISDIR(st.st_mode);
 }
 
-std::string current_datetime()
+std::string currentDatetime()
 {
     auto now = std::chrono::system_clock::now();
     auto in_time_t = std::chrono::system_clock::to_time_t(now);
@@ -43,7 +28,7 @@ std::string current_datetime()
     return ss.str();
 }
 
-std::string get_last_dir(const std::string& path)
+std::string getLastDir(const std::string& path)
 {
     std::stringstream ss(path);
 
@@ -60,12 +45,12 @@ std::string get_last_dir(const std::string& path)
     return "\\";
 }
 
-bool is_url_friendly(char ch)
+bool isUrlFriendly(char ch)
 {
     return std::isalnum(ch) || ch == '-';
 }
 
-std::string create_slug(const std::string& input)
+std::string toSlug(const std::string& input)
 {
     std::string slug = input;
 
@@ -77,7 +62,7 @@ std::string create_slug(const std::string& input)
 
     // Remove non-alphanumeric characters except hyphens
     slug.erase(std::remove_if(slug.begin(), slug.end(), [](char ch) {
-        return !is_url_friendly(ch);
+        return !isUrlFriendly(ch);
     }), slug.end());
 
     // Remove consecutive hyphens

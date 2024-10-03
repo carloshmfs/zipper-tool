@@ -2,14 +2,9 @@
 
 #include <string>
 
-void show_helper(bool is_error);
+bool isDir(const std::string& dir);
+bool isUrlFriendly(char ch);
 
-bool is_dir(const std::string& dir);
-
-bool is_url_friendly(char ch);
-
-std::string current_datetime();
-
-std::string get_last_dir(const std::string& path);
-
-std::string create_slug(const std::string& input);
+std::string currentDatetime();
+std::string getLastDir(const std::string& path);
+std::string toSlug(const std::string& input);

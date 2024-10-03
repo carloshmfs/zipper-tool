@@ -10,7 +10,6 @@ class Zipper
 public:
     // template <typename T>
     // std::function<void(const Zipper&,double,T)> onProgress;
-    ~Zipper();
 
     void saveAt(const std::string& dirPath);
     void archiveName(const std::string& name);

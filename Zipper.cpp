@@ -32,14 +32,14 @@ void Zipper::walkDirectory(const std::string& startdir, const std::string& input
 {
     DIR *dp = ::opendir(m_addedDirPath.c_str());
     if (dp == nullptr) {
-        throw std::runtime_error("Failed to open input directory: " + std::string(std::strerror(errno)));
+        throw std::runtime_error("Failed to open source directory: " + std::string(std::strerror(errno)));
     }
 
     struct dirent *dirp;
     while ((dirp = readdir(dp)) != nullptr) {
         if (dirp->d_name != std::string(".") && dirp->d_name != std::string("..")) {
             std::string fullname = m_addedDirPath + "/" + dirp->d_name;
-            if (is_dir(fullname)) {
+            if (isDir(fullname)) {
                 if (zip_dir_add(m_zip, fullname.substr(startdir.length() + 1).c_str(), ZIP_FL_ENC_UTF_8) < 0) {
                     throw std::runtime_error("Failed to add directory to zip: " + std::string(zip_strerror(m_zip)));
                 }
@@ -57,11 +57,6 @@ void Zipper::walkDirectory(const std::string& startdir, const std::string& input
         }
     }
     ::closedir(dp);
-}
-
-Zipper::~Zipper()
-{
-    zip_close(m_zip);
 }
 
 void Zipper::saveAt(const std::string& dirPath)
