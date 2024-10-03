@@ -9,8 +9,8 @@ int main(int argc, char* argv[])
     parser.setApplicationName("zipper");
     parser.setApplicationDescription("A CLI that archives and compresses a source directory into a output directory.");
 
-    parser.addPositionalArgument("source", "Source directory.", "[source]");
-    parser.addPositionalArgument("output", "Output directory.", "[output]");
+    parser.addPositionalArgument("source", "The directory that will archived.", "[SOURCE]");
+    parser.addPositionalArgument("output", "The target directory that the archive will be saved.", "[OUTPUT]");
 
     parser.parse();
 

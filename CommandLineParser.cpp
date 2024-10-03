@@ -2,15 +2,32 @@
 
 #include <iostream>
 #include <string>
+#include <utility>
 
 int CommandLineParser::showHelp(int statusCode) const
 {
-    std::cout << "Usage: " << m_applicationName;
+    std::cout << "USAGE: " << m_applicationName;
 
-    for (const auto& arg : m_positionalArguments) {
-        std::cout << " " << arg.getSyntax();
+    if (! m_positionalArguments.empty()) {
+        for (const auto& arg : m_positionalArguments) {
+            std::cout << " " << arg.getSyntax();
+        }
     }
-    std::cout << std::endl;
+
+    std::cout << std::endl << std::endl << m_applicationDescription << std::endl;
+
+    if (! m_positionalArguments.empty()) {
+        std::cout << std::endl << std::endl << "ARGUMENTS:" << std::endl;
+
+        for (const auto& arg : m_positionalArguments) {
+            std::cout << " " << arg.getValueName() << "\t\t" << arg.getDescription() << std::endl;
+        }
+    }
+
+    if (! m_options.empty()) {
+        // TODO...
+        std::unreachable();
+    }
 
     return statusCode;
 }
@@ -59,10 +76,22 @@ void CommandLineParser::parseOptions()
 
 bool CommandLineParser::isSet(const std::string& value) const
 {
+    for(const auto& positionalArgument  : m_positionalArguments) {
+        if (value == positionalArgument.getValueName() && !positionalArgument.getValue().empty()) {
+            return true;
+        }
+    }
+
     return false;
 }
 
 std::string CommandLineParser::getValue(const std::string& value) const
 {
+    for(const auto& positionalArgument  : m_positionalArguments) {
+        if (value == positionalArgument.getValueName()) {
+            return positionalArgument.getValue();
+        }
+    }
+
     return std::string();
 }

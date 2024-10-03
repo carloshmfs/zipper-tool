@@ -5,9 +5,19 @@ CommandLineArgument CommandLineArgument::setValueName(const std::string& valueNa
     return *this;
 }
 
+std::string CommandLineArgument::getValueName() const
+{
+    return m_valueName;
+}
+
 CommandLineArgument CommandLineArgument::setDescription(const std::string& description)
 {
     return *this;
+}
+
+std::string CommandLineArgument::getDescription() const
+{
+    return m_description;
 }
 
 CommandLineArgument CommandLineArgument::setDefaultValue(const std::string& value)
@@ -28,4 +38,9 @@ std::string CommandLineArgument::getSyntax() const
 void CommandLineArgument::setValue(const std::string& value)
 {
     m_value = value;
+}
+
+std::string CommandLineArgument::getValue() const
+{
+    return m_value;
 }
