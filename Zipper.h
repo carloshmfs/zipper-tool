@@ -13,6 +13,7 @@ public:
 
     void saveAt(const std::string& dirPath);
     void archiveName(const std::string& name);
+    void archiveNameFromDirectory(const std::string& dirPath);
 
     void addDirectory(const std::string& dirPath);
     void make();

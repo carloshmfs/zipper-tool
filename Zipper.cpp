@@ -3,6 +3,9 @@
 
 #include <zip.h>
 
+#include <iostream>
+#include <iterator>
+#include <filesystem>
 #include <stdexcept>
 #include <dirent.h>
 #include <errno.h>
@@ -11,8 +14,10 @@
 
 void Zipper::make()
 {
+    std::string zipFilePath = (m_outDirPath.back() == '/' || m_outDirPath.back() == '\\') ? m_outDirPath + m_archiveName : m_outDirPath + "/" + m_archiveName;
+
     int err;
-    if ((m_zip = zip_open(m_archiveName.c_str(), ZIP_CREATE | ZIP_EXCL, &err)) == nullptr) {
+    if ((m_zip = zip_open(zipFilePath.c_str(), ZIP_CREATE | ZIP_EXCL, &err)) == nullptr) {
         zip_error_t error;
         zip_error_init_with_code(&error, err);
         zip_error_fini(&error);
@@ -67,6 +72,15 @@ void Zipper::saveAt(const std::string& dirPath)
 void Zipper::archiveName(const std::string& name)
 {
     m_archiveName = name;
+}
+
+void Zipper::archiveNameFromDirectory(const std::string& dirPath)
+{
+    std::filesystem::path outputPath(dirPath);
+    std::string outputDirName = std::prev(outputPath.end())->string();
+    outputDirName = toSlug(outputDirName) + "_" + currentDatetime() + ".zip";
+
+    archiveName(outputDirName);
 }
 
 void Zipper::addDirectory(const std::string& dirName)
