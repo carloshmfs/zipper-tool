@@ -2,7 +2,7 @@
 
 #include <zip.h>
 
-#include <functional>
+#include <filesystem>
 #include <string>
 
 class Zipper
@@ -19,12 +19,12 @@ public:
     void make();
 
 private:
-    void walkDirectory(const std::string& startdir, const std::string& inputdir);
+    void walkDirectory();
     void addFile();
 
     zip_t* m_zip = nullptr;
 
     std::string m_archiveName = "";
-    std::string m_addedDirPath = "";
-    std::string m_outDirPath = "";
+    std::filesystem::directory_entry m_addedDir;
+    std::filesystem::directory_entry m_outDir;
 };

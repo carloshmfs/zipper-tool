@@ -14,7 +14,7 @@
 
 void Zipper::make()
 {
-    std::string zipFilePath = (m_outDirPath.back() == '/' || m_outDirPath.back() == '\\') ? m_outDirPath + m_archiveName : m_outDirPath + "/" + m_archiveName;
+    std::string zipFilePath = (m_outDir.path().string().back() == '/' || m_outDir.path().string().back() == '\\') ? m_outDir.path().string() + m_archiveName : m_outDir.path().string() + "/" + m_archiveName;
 
     int err;
     if ((m_zip = zip_open(zipFilePath.c_str(), ZIP_CREATE | ZIP_EXCL, &err)) == nullptr) {
@@ -27,58 +27,23 @@ void Zipper::make()
 
     //register callback
 
-    walkDirectory(m_addedDirPath, m_addedDirPath);
+    walkDirectory();
 
     zip_close(m_zip);
 }
 
 
-void Zipper::walkDirectory(const std::string& startdir, [[maybe_unused]] const std::string& inputdir)
+void Zipper::walkDirectory()
 {
-    for (const auto& dirEntry : std::filesystem::directory_iterator {startdir}) {
-            std::cout << dirEntry.path().root_directory().string() << std::endl;
-
-        if (dirEntry.is_directory()) {
-            // zip_dir_add(m_zip, dirEntry.path().string().c_str(), ZIP_FL_ENC_UTF_8);
-            walkDirectory(dirEntry.path().string(), "");
-            continue;
-        }
-
-
+    auto dirIter = std::filesystem::recursive_directory_iterator(m_addedDir.path());
+    for (const auto& file : dirIter) {
+        std::cout << dirIter.depth() << " " << file.relative_path().string() << std::endl; 
     }
-
-    // DIR *dp = ::opendir(m_addedDirPath.c_str());
-    // if (dp == nullptr) {
-    //     throw std::runtime_error("Failed to open source directory: " + std::string(std::strerror(errno)));
-    // }
-
-    // struct dirent *dirp;
-    // while ((dirp = readdir(dp)) != nullptr) {
-    //     if (dirp->d_name != std::string(".") && dirp->d_name != std::string("..")) {
-    //         std::string fullname = m_addedDirPath + "/" + dirp->d_name;
-    //         if (isDir(fullname)) {
-    //             if (zip_dir_add(m_zip, fullname.substr(startdir.length() + 1).c_str(), ZIP_FL_ENC_UTF_8) < 0) {
-    //                 throw std::runtime_error("Failed to add directory to zip: " + std::string(zip_strerror(m_zip)));
-    //             }
-    //             walkDirectory(startdir, fullname);
-    //         } else {
-    //             zip_source_t *source = zip_source_file(m_zip, fullname.c_str(), 0, 0);
-    //             if (source == nullptr) {
-    //                 throw std::runtime_error("Failed to add file to zip: " + std::string(zip_strerror(m_zip)));
-    //             }
-    //             if (zip_file_add(m_zip, fullname.substr(startdir.length() + 1).c_str(), source, ZIP_FL_ENC_UTF_8) < 0) {
-    //                 zip_source_free(source);
-    //                 throw std::runtime_error("Failed to add file to zip: " + std::string(zip_strerror(m_zip)));
-    //             }
-    //         }
-    //     }
-    // }
-    // ::closedir(dp);
 }
 
 void Zipper::saveAt(const std::string& dirPath)
 {
-    m_outDirPath = dirPath;
+    m_outDir = std::filesystem::directory_entry(dirPath);
 }
 
 void Zipper::archiveName(const std::string& name)
@@ -95,7 +60,7 @@ void Zipper::archiveNameFromDirectory(const std::string& dirPath)
     archiveName(outputDirName);
 }
 
-void Zipper::addDirectory(const std::string& dirName)
+void Zipper::addDirectory(const std::string& dirPath)
 {
-    m_addedDirPath = dirName;
+    m_addedDir = std::filesystem::directory_entry(dirPath);
 }
