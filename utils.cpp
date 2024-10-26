@@ -1,14 +1,14 @@
 #include "utils.h"
 
-#include <string>
+#include <algorithm>
 #include <chrono>
 #include <ctime>
+#include <ctype.h>
 #include <iomanip>
 #include <sstream>
-#include <vector>
-#include <algorithm>
-#include <ctype.h>
+#include <string>
 #include <sys/stat.h>
+#include <vector>
 
 bool isDir(const std::string& dir)
 {
@@ -45,10 +45,7 @@ std::string getLastDir(const std::string& path)
     return "\\";
 }
 
-bool isUrlFriendly(char ch)
-{
-    return std::isalnum(ch) || ch == '-';
-}
+bool isUrlFriendly(char ch) { return std::isalnum(ch) || ch == '-'; }
 
 std::string toSlug(const std::string& input)
 {
@@ -61,14 +58,10 @@ std::string toSlug(const std::string& input)
     std::replace(slug.begin(), slug.end(), ' ', '-');
 
     // Remove non-alphanumeric characters except hyphens
-    slug.erase(std::remove_if(slug.begin(), slug.end(), [](char ch) {
-        return !isUrlFriendly(ch);
-    }), slug.end());
+    slug.erase(std::remove_if(slug.begin(), slug.end(), [](char ch) { return !isUrlFriendly(ch); }), slug.end());
 
     // Remove consecutive hyphens
-    auto new_end = std::unique(slug.begin(), slug.end(), [](char a, char b) {
-        return a == '-' && b == '-';
-    });
+    auto new_end = std::unique(slug.begin(), slug.end(), [](char a, char b) { return a == '-' && b == '-'; });
     slug.erase(new_end, slug.end());
 
     // Remove leading or trailing hyphens

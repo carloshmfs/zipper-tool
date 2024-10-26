@@ -1,12 +1,9 @@
 #include "ProgressBar.h"
 
-#include <iostream>
 #include <iomanip>
+#include <iostream>
 
-void ProgressBar::update(float percentage)
-{
-    m_percentage = percentage;
-}
+void ProgressBar::update(float percentage) { m_percentage = percentage; }
 
 void ProgressBar::show() const
 {
@@ -32,8 +29,4 @@ void ProgressBar::show() const
     }
 }
 
-int ProgressBar::widthFromPercentage() const
-{
-    return (m_width * m_percentage) / 100;
-}
-
+int ProgressBar::widthFromPercentage() const { return (m_width * m_percentage) / 100; }

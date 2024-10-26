@@ -8,7 +8,7 @@ int CommandLineParser::showHelp(int statusCode) const
 {
     std::cout << "USAGE: " << m_applicationName;
 
-    if (! m_positionalArguments.empty()) {
+    if (!m_positionalArguments.empty()) {
         for (const auto& arg : m_positionalArguments) {
             std::cout << " " << arg.getSyntax();
         }
@@ -16,7 +16,7 @@ int CommandLineParser::showHelp(int statusCode) const
 
     std::cout << std::endl << std::endl << m_applicationDescription << std::endl;
 
-    if (! m_positionalArguments.empty()) {
+    if (!m_positionalArguments.empty()) {
         std::cout << std::endl << std::endl << "ARGUMENTS:" << std::endl;
 
         for (const auto& arg : m_positionalArguments) {
@@ -24,7 +24,7 @@ int CommandLineParser::showHelp(int statusCode) const
         }
     }
 
-    if (! m_options.empty()) {
+    if (!m_options.empty()) {
         // TODO...
         std::unreachable();
     }
@@ -32,17 +32,15 @@ int CommandLineParser::showHelp(int statusCode) const
     return statusCode;
 }
 
-void CommandLineParser::setApplicationName(const std::string& name)
-{
-    m_applicationName = name;
-}
+void CommandLineParser::setApplicationName(const std::string& name) { m_applicationName = name; }
 
 void CommandLineParser::setApplicationDescription(const std::string& description)
 {
     m_applicationDescription = description;
 }
 
-void CommandLineParser::addPositionalArgument(const std::string& name, const std::string& description, const std::string& syntax, const std::string& defaultValue)
+void CommandLineParser::addPositionalArgument(
+    const std::string& name, const std::string& description, const std::string& syntax, const std::string& defaultValue)
 {
     m_positionalArguments.emplace_back(CommandLineArgument(name, description, syntax, defaultValue));
 }
@@ -76,7 +74,7 @@ void CommandLineParser::parseOptions()
 
 bool CommandLineParser::isSet(const std::string& value) const
 {
-    for(const auto& positionalArgument  : m_positionalArguments) {
+    for (const auto& positionalArgument : m_positionalArguments) {
         if (value == positionalArgument.getValueName() && !positionalArgument.getValue().empty()) {
             return true;
         }
@@ -87,7 +85,7 @@ bool CommandLineParser::isSet(const std::string& value) const
 
 std::string CommandLineParser::getValue(const std::string& value) const
 {
-    for(const auto& positionalArgument  : m_positionalArguments) {
+    for (const auto& positionalArgument : m_positionalArguments) {
         if (value == positionalArgument.getValueName()) {
             return positionalArgument.getValue();
         }

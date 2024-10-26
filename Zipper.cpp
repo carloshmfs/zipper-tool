@@ -3,18 +3,20 @@
 
 #include <zip.h>
 
-#include <iostream>
-#include <iterator>
-#include <filesystem>
-#include <stdexcept>
+#include <cstring>
 #include <dirent.h>
 #include <errno.h>
-#include <cstring>
+#include <filesystem>
+#include <iostream>
+#include <iterator>
+#include <stdexcept>
 #include <string>
 
 void Zipper::make()
 {
-    std::string zipFilePath = (m_outDir.path().string().back() == '/' || m_outDir.path().string().back() == '\\') ? m_outDir.path().string() + m_archiveName : m_outDir.path().string() + "/" + m_archiveName;
+    std::string zipFilePath = (m_outDir.path().string().back() == '/' || m_outDir.path().string().back() == '\\')
+        ? m_outDir.path().string() + m_archiveName
+        : m_outDir.path().string() + "/" + m_archiveName;
 
     int err;
     if ((m_zip = zip_open(zipFilePath.c_str(), ZIP_CREATE | ZIP_EXCL, &err)) == nullptr) {
@@ -25,31 +27,24 @@ void Zipper::make()
         throw std::runtime_error("Failed to create archive: " + m_archiveName);
     }
 
-    //register callback
+    // register callback
 
     walkDirectory();
 
     zip_close(m_zip);
 }
 
-
 void Zipper::walkDirectory()
 {
     auto dirIter = std::filesystem::recursive_directory_iterator(m_addedDir.path());
     for (const auto& file : dirIter) {
-        std::cout << dirIter.depth() << " " << file.relative_path().string() << std::endl; 
+        std::cout << dirIter.depth() << " " << file.relative_path().string() << std::endl;
     }
 }
 
-void Zipper::saveAt(const std::string& dirPath)
-{
-    m_outDir = std::filesystem::directory_entry(dirPath);
-}
+void Zipper::saveAt(const std::string& dirPath) { m_outDir = std::filesystem::directory_entry(dirPath); }
 
-void Zipper::archiveName(const std::string& name)
-{
-    m_archiveName = name;
-}
+void Zipper::archiveName(const std::string& name) { m_archiveName = name; }
 
 void Zipper::archiveNameFromDirectory(const std::string& dirPath)
 {
@@ -60,7 +55,4 @@ void Zipper::archiveNameFromDirectory(const std::string& dirPath)
     archiveName(outputDirName);
 }
 
-void Zipper::addDirectory(const std::string& dirPath)
-{
-    m_addedDir = std::filesystem::directory_entry(dirPath);
-}
+void Zipper::addDirectory(const std::string& dirPath) { m_addedDir = std::filesystem::directory_entry(dirPath); }

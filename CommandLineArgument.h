@@ -2,16 +2,17 @@
 
 #include <string>
 
-class CommandLineArgument
-{
+class CommandLineArgument {
 public:
     CommandLineArgument() = default;
-    explicit CommandLineArgument(const std::string& valueName, const std::string& description, const std::string& syntax, const std::string& defaultValue)
+    explicit CommandLineArgument(const std::string& valueName, const std::string& description,
+        const std::string& syntax, const std::string& defaultValue)
         : m_valueName(valueName)
         , m_description(description)
         , m_defaultValue(defaultValue)
         , m_syntax(syntax)
-    {}
+    {
+    }
 
     CommandLineArgument setValueName(const std::string& valueName);
     std::string getValueName() const;

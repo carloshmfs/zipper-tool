@@ -1,12 +1,11 @@
 #pragma once
 
-#include "CommandLineOption.h"
 #include "CommandLineArgument.h"
+#include "CommandLineOption.h"
 #include <string>
 #include <vector>
 
-class CommandLineParser
-{
+class CommandLineParser {
 public:
     explicit CommandLineParser(int argc, char* argv[])
         : m_argc(argc)
@@ -14,16 +13,18 @@ public:
         , m_applicationName("")
         , m_applicationDescription("")
         , m_argumentIndex(1)
-    {}
+    {
+    }
 
     void setApplicationName(const std::string& name);
     void setApplicationDescription(const std::string& description);
-    
+
     void addOption(const std::string& name, const std::string& description, const std::string& syntax);
     void addOption(const CommandLineOption& argument);
     std::vector<CommandLineOption> options() const;
 
-    void addPositionalArgument(const std::string& name, const std::string& description, const std::string& syntax, const std::string& defaultValue = "");
+    void addPositionalArgument(const std::string& name, const std::string& description, const std::string& syntax,
+        const std::string& defaultValue = "");
     void addPositionalArgument(const CommandLineArgument& argument);
     std::vector<CommandLineOption> positionalArguments() const;
 

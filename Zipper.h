@@ -5,8 +5,7 @@
 #include <filesystem>
 #include <string>
 
-class Zipper
-{
+class Zipper {
 public:
     // template <typename T>
     // std::function<void(const Zipper&,double,T)> onProgress;

@@ -2,12 +2,12 @@
 
 #include <string>
 
-class CommandLineOption
-{
+class CommandLineOption {
 public:
-    explicit CommandLineOption(const std::string& name) 
+    explicit CommandLineOption(const std::string& name)
         : m_name(name)
-    {}
+    {
+    }
 
     CommandLineOption setDescription(const std::string& description);
     CommandLineOption setValueName(const std::string& valueName);

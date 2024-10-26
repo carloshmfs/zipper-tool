@@ -17,13 +17,13 @@ int main(int argc, char* argv[])
 
     parser.parse();
 
-    if (! parser.isSet("SOURCE") || ! parser.isSet("SOURCE")) {
+    if (!parser.isSet("SOURCE") || !parser.isSet("SOURCE")) {
         return parser.showHelp(1);
     }
 
     std::string sourceDir = parser.getValue("SOURCE");
     std::string outputDir = parser.getValue("OUTPUT");
-    
+
     Zipper zipper;
     zipper.archiveNameFromDirectory(sourceDir);
     zipper.saveAt(outputDir);
