@@ -3,12 +3,12 @@
 
 #include <zip.h>
 
+#include <bits/stdc++.h>
 #include <cstring>
 #include <dirent.h>
-#include <errno.h>
 #include <filesystem>
-#include <iostream>
 #include <iterator>
+#include <print>
 #include <stdexcept>
 #include <string>
 
@@ -27,8 +27,6 @@ void Zipper::make()
         throw std::runtime_error("Failed to create archive: " + m_archiveName);
     }
 
-    // register callback
-
     walkDirectory();
 
     zip_close(m_zip);
@@ -36,9 +34,22 @@ void Zipper::make()
 
 void Zipper::walkDirectory()
 {
+    auto handlePath = [&](const std::filesystem::path& full_path) -> void {
+        // size() + 1 so it removes the slash from the beggin of the path
+        std::string relative_path = full_path.string().replace(0, m_addedDir.path().string().size() + 1, "");
+
+        if (std::filesystem::is_directory(full_path)) {
+            zip_dir_add(m_zip, relative_path.c_str(), ZIP_FL_ENC_GUESS);
+            return;
+        }
+
+        zip_source_t* source = zip_source_file(m_zip, full_path.string().c_str(), 0, 0);
+        zip_file_add(m_zip, relative_path.c_str(), source, ZIP_FL_ENC_GUESS);
+    };
+
     auto dirIter = std::filesystem::recursive_directory_iterator(m_addedDir.path());
     for (const auto& file : dirIter) {
-        std::cout << dirIter.depth() << " " << file.relative_path().string() << std::endl;
+        handlePath(file);
     }
 }
 
